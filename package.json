@@ -1,0 +1,7 @@
+{
+  "name": "msmd-project9-report",
+  "version": "1.0.0",
+  "dependencies": {
+    "docx": "^8.5.0"
+  }
+}
