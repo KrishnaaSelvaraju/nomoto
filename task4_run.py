@@ -81,6 +81,9 @@ def run_and_save(n, scenario, seed, tag):
         "censored_count": int(cens.sum()), "censored_pct": float(100 * cens.sum() / n),
         "min_nm": float(D.min() / NM), "max_nm": float(D.max() / NM),
         "mean_nm": float(D.mean() / NM), "median_nm": float(np.median(D) / NM),
+        # distance at which the search stopped for still-unresolved trials
+        "search_stop_m": float(D[cens].max()) if cens.any() else None,
+        "search_cap_m": float(mc.D0 + mc.MAX_ROUNDS * mc.INCREMENT),
         "runtime_s": dt,
     }
     return stats

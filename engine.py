@@ -95,12 +95,40 @@ def collision_check(corners1, corners2, centroid1, centroid2, D_initial):
     return 2  # inconclusive, keep going
 
 
+def steady_turn_circles_disjoint(x1, y1, psi1, beta1, r1, V1, ship1,
+                                 x2, y2, psi2, beta2, r2, V2, ship2):
+    """Timeout test (works on scalars or numpy arrays).
+
+    With the rudder held, a first-order Nomoto vessel settles onto a steady
+    turning circle of radius V/|r|. If the two circles, each widened by its
+    hull's half-diagonal, cannot touch, no collision is possible at any later
+    time, so the trial is safe even though the separation never grew past D
+    (typical when both vessels turn toward the same side and keep circling).
+    Near-zero yaw rate (straight track) gives a huge radius, so the circles
+    overlap and the trial stays unsafe; that case is left to the D search.
+    """
+    def centre_and_radius(x, y, psi, beta, r, V):
+        r_safe = np.where(np.abs(r) < 1e-9, 1e-9, r)
+        rad = V / r_safe            # signed: + = starboard turn, centre to the right
+        cog = psi - beta
+        return x + rad * np.cos(cog), y - rad * np.sin(cog), np.abs(rad)
+
+    cx1, cy1, R1 = centre_and_radius(x1, y1, psi1, beta1, r1, V1)
+    cx2, cy2, R2 = centre_and_radius(x2, y2, psi2, beta2, r2, V2)
+    h = (np.hypot(ship1["Lpp"], ship1["B"]) + np.hypot(ship2["Lpp"], ship2["B"])) / 2.0
+    d = np.hypot(cx2 - cx1, cy2 - cy1)
+    apart = d > R1 + R2 + h                 # circles side by side
+    nested = d < np.abs(R1 - R2) - h        # one circle wholly inside the other
+    return apart | nested
+
+
 def find_minimum_safe_distance(delta1_target_deg, delta2_target_deg,
-                                dt=0.5, max_sim_time=900.0, max_trials=300,
+                                dt=0.5, max_sim_time=1800.0, max_trials=300,
                                 verbose=True):
     """Head-on encounter: Vessel1 at (0,0) heading north, Vessel2 at (0,D)
     heading south, closing. Increases D until SAT shows no collision and
-    the vessels end up farther apart than their starting separation."""
+    either the vessels end up farther apart than their starting separation,
+    or (at the time limit) their steady turning circles can never touch."""
     D = (sd.VESSEL1["Lpp"] + sd.VESSEL2["Lpp"]) / 2.0
     increment = 0.25 * min(sd.VESSEL1["Lpp"], sd.VESSEL2["Lpp"])
 
@@ -129,6 +157,11 @@ def find_minimum_safe_distance(delta1_target_deg, delta2_target_deg,
             status = collision_check(c1, c2, s1.centroid(), s2.centroid(), D)
             if status in (0, 1):
                 break
+
+        if status == 2 and steady_turn_circles_disjoint(
+                s1.x, s1.y, s1.psi, s1.beta, s1.r, s1.V, sd.VESSEL1,
+                s2.x, s2.y, s2.psi, s2.beta, s2.r, s2.V, sd.VESSEL2):
+            status = 0  # timed out circling on turning circles that can never touch
 
         if verbose:
             print(f"  trial {trial}: D = {D:8.1f} m -> "

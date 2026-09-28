@@ -8,11 +8,17 @@ ship_data.py (not a shared placeholder).
 
 import numpy as np
 import ship_data as sd
+from engine import steady_turn_circles_disjoint
 
 DT = 0.5
-MAX_SIM_TIME = 900.0
-MAX_ROUNDS = 100
-STAGNATION_PATIENCE = 30
+# 1800 s lets vessels starting ~6 nm apart close and pass (closing speed can
+# drop to ~13 m/s in a hard turn). 190 rounds puts the search cap at
+# D0 + 190 * INCREMENT = 11,200 m (~6.05 nm). The stagnation early-stop is
+# effectively off (patience = MAX_ROUNDS) so every unresolved trial is
+# censored at the same, reportable cap.
+MAX_SIM_TIME = 1800.0
+MAX_ROUNDS = 190
+STAGNATION_PATIENCE = MAX_ROUNDS
 
 D0 = (sd.VESSEL1["Lpp"] + sd.VESSEL2["Lpp"]) / 2.0
 INCREMENT = 0.25 * min(sd.VESSEL1["Lpp"], sd.VESSEL2["Lpp"])
@@ -148,7 +154,13 @@ def run_monte_carlo(n, scenario, seed=None, verbose=True):
             status[newly_safe] = 0
             resolved |= newly_coll | newly_safe
 
-        status[~resolved] = 1
+        # Timed out without collision: safe if the steady turning circles can
+        # never touch (see engine.steady_turn_circles_disjoint), else unsafe.
+        disjoint = steady_turn_circles_disjoint(
+            x1, y1, psi1, beta1, r1, Vv1, sd.VESSEL1,
+            x2, y2, psi2, beta2, r2, Vv2, sd.VESSEL2)
+        status[~resolved & disjoint] = 0
+        status[~resolved & ~disjoint] = 1
 
         safe_local = status == 0
         idx_safe = idx[safe_local]
