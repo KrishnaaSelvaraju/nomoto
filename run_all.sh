@@ -46,8 +46,16 @@ node build_report.js
 
 # Convert to PDF if LibreOffice is available (assignment requires both formats)
 if command -v soffice &> /dev/null; then
+    rm -f MSMD_Project9_Report_Tasks1-4.pdf
     soffice --headless --convert-to pdf MSMD_Project9_Report_Tasks1-4.docx
-    echo "Also saved MSMD_Project9_Report_Tasks1-4.pdf"
+    # soffice exits 0 even when conversion fails (e.g. Writer not installed),
+    # so check for the output file instead of trusting the exit code.
+    if [ -f MSMD_Project9_Report_Tasks1-4.pdf ]; then
+        echo "Also saved MSMD_Project9_Report_Tasks1-4.pdf"
+    else
+        echo "WARNING: PDF conversion failed. Check that LibreOffice Writer is"
+        echo "         installed (e.g. apt-get install libreoffice-writer)."
+    fi
 else
     echo "NOTE: LibreOffice (soffice) not found -- only the .docx was created."
     echo "      Open the .docx in Word and 'Save As PDF' to get the PDF the"
