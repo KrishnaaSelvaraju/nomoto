@@ -25,7 +25,9 @@ Assignment spec and reference papers are in `reference/`.
 3. Review outputs/*.json, figures/, and the generated report. Sanity-check that results
    are physically sensible (COLREG-COLREG D_min < Blind-Blind; Task 1 numbers reasonable).
 4. Known caveats to keep in the report: T is a scaling estimate; Blind-Blind Monte Carlo
-   has a censored fraction (~12%) where no finite distance avoids collision (cap ~6 nm);
+   has a censored fraction (0.3% at N=10000) still unresolved at the search cap (11,200 m,
+   ~6.05 nm). A trial that hits the sim time limit without collision counts as safe only
+   if the steady turning circles can never touch (engine.steady_turn_circles_disjoint);
    vectorised vs scalar engines can differ by one search increment at boundary cases.
 
 ## Open items / possible improvements

@@ -1,0 +1,19 @@
+{
+  "ship": "KCS",
+  "K": 0.028560082728876935,
+  "T": 43.56060606060606,
+  "t90_s": 139.00000000000065,
+  "t180_s": 230.79999999999544,
+  "advance_m": 1179.716834708251,
+  "advance_Lpp": 5.129203629166309,
+  "transfer_m": 510.0334628776772,
+  "transfer_Lpp": 2.2175367951203357,
+  "tactical_diameter_m": 1073.2102672246956,
+  "tactical_diameter_Lpp": 4.6661315966291115,
+  "diameter_of_turn_m": 920.0001249599817,
+  "diameter_of_turn_Lpp": 4.000000543304268,
+  "yaw_rate_initial_deg_s": 0.0033149422926797728,
+  "yaw_rate_steady_deg_s": 0.999602830952797,
+  "speed_steady_turn_kn": 15.60000111138325,
+  "drift_angle_steady_deg": 10.849999299268573
+}

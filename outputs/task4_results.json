@@ -1,0 +1,30 @@
+{
+  "COLREG-COLREG": {
+    "scenario": "COLREG-COLREG",
+    "N": 10000,
+    "seed": 42,
+    "censored_count": 0,
+    "censored_pct": 0.0,
+    "min_nm": 0.8625809935205183,
+    "max_nm": 1.8250539956803455,
+    "mean_nm": 0.9782329913606912,
+    "median_nm": 0.9557235421166307,
+    "search_stop_m": null,
+    "search_cap_m": 11200.0,
+    "runtime_s": 73.31048798561096
+  },
+  "Blind-Blind": {
+    "scenario": "Blind-Blind",
+    "N": 10000,
+    "seed": 43,
+    "censored_count": 29,
+    "censored_pct": 0.29,
+    "min_nm": 0.8004859611231101,
+    "max_nm": 6.047516198704104,
+    "mean_nm": 1.2474894708423325,
+    "median_nm": 1.048866090712743,
+    "search_stop_m": 11200.0,
+    "search_cap_m": 11200.0,
+    "runtime_s": 694.3662185668945
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "COLREG-COLREG": {
+    "D_min_m": 1712.5,
+    "D_min_over_larger_Lpp": 5.3515625
+  },
+  "Blind-Blind": {
+    "D_min_m": 1770.0,
+    "D_min_over_larger_Lpp": 5.53125,
+    "delta1_deg": -22.474563042719467,
+    "delta2_deg": 9.79392160006082
+  }
+}
